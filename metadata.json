@@ -1,0 +1,6 @@
+{
+  "name": "WFH AI Jobs Aggregator",
+  "description": "Work from home AI and data jobs aggregator for annotation, evaluation, transcription, and labeling roles.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

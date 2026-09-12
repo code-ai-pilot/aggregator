@@ -1,0 +1,120 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function isValidUserProfile(data, userId) {
+      return (!('uid' in data) || data.uid == userId)
+        && (!('firstName' in data) || (data.firstName is string && data.firstName.size() <= 60))
+        && (!('lastName' in data) || (data.lastName is string && data.lastName.size() <= 60))
+        && (!('country' in data) || (data.country is string && data.country.size() <= 80))
+        && (!('timezone' in data) || (data.timezone is string && data.timezone.size() <= 80))
+        && (!('languages' in data) || (data.languages is list && data.languages.size() <= 20))
+        && (!('skills' in data) || (data.skills is list && data.skills.size() <= 50))
+        && (!('experienceLevel' in data) || (data.experienceLevel is string && data.experienceLevel.size() <= 50))
+        && (!('preferredCategories' in data) || (data.preferredCategories is list && data.preferredCategories.size() <= 30))
+        && (!('preferredWorkTypes' in data) || (data.preferredWorkTypes is list && data.preferredWorkTypes.size() <= 10))
+        && (!('availability' in data) || (data.availability is string && data.availability.size() <= 50));
+    }
+
+    function isValidUserSettings(data, userId) {
+      return (!('uid' in data) || data.uid == userId)
+        && (!('account' in data) || data.account is map)
+        && (!('jobPreferences' in data) || data.jobPreferences is map)
+        && (!('notifications' in data) || data.notifications is map)
+        && (!('privacy' in data) || data.privacy is map);
+    }
+
+    function isValidJobEvent(data) {
+      return data.eventType is string && data.eventType.size() > 0 && data.eventType.size() <= 60
+        && (!('uid' in data) || data.uid == null || (isAuthenticated() && data.uid == request.auth.uid))
+        && (!('jobId' in data) || data.jobId == null || (data.jobId is string && data.jobId.size() <= 128))
+        && (!('sourceId' in data) || data.sourceId == null || (data.sourceId is string && data.sourceId.size() <= 128))
+        && (!('metadata' in data) || data.metadata is map);
+    }
+
+    // User profile document keyed strictly by authenticated UID
+    match /users/{userId} {
+      allow get: if isOwner(userId) && isValidId(userId);
+      allow list: if false;
+      allow create: if isOwner(userId) && isValidId(userId) && isValidUserProfile(request.resource.data, userId);
+      allow update: if isOwner(userId) && isValidId(userId) && isValidUserProfile(request.resource.data, userId);
+      allow delete: if isOwner(userId) && isValidId(userId);
+    }
+
+    // Profiles alias collection keyed strictly by authenticated UID
+    match /profiles/{userId} {
+      allow get: if isOwner(userId) && isValidId(userId);
+      allow list: if false;
+      allow create: if isOwner(userId) && isValidId(userId) && isValidUserProfile(request.resource.data, userId);
+      allow update: if isOwner(userId) && isValidId(userId) && isValidUserProfile(request.resource.data, userId);
+      allow delete: if isOwner(userId) && isValidId(userId);
+    }
+
+    // User settings document keyed strictly by authenticated UID
+    match /user_settings/{userId} {
+      allow get: if isOwner(userId) && isValidId(userId);
+      allow list: if false;
+      allow create: if isOwner(userId) && isValidId(userId) && isValidUserSettings(request.resource.data, userId);
+      allow update: if isOwner(userId) && isValidId(userId) && isValidUserSettings(request.resource.data, userId);
+      allow delete: if isOwner(userId) && isValidId(userId);
+    }
+
+    // Aggregated jobs collection - public read, backend-only write
+    match /jobs/{jobId} {
+      allow get, list: if true;
+      allow create, update, delete: if false;
+    }
+
+    // Sources collection - public read, backend-only write
+    match /sources/{sourceId} {
+      allow get, list: if true;
+      allow create, update, delete: if false;
+    }
+
+    // Saved jobs collection - user-owned subdocuments
+    match /savedJobs/{savedJobId} {
+      allow get, list: if isAuthenticated() && (resource == null || resource.data.uid == request.auth.uid);
+      allow create: if isAuthenticated() && request.resource.data.uid == request.auth.uid;
+      allow update, delete: if isAuthenticated() && resource.data.uid == request.auth.uid;
+    }
+
+    // Job interaction events - append-only telemetry, no client reads, cannot impersonate
+    match /jobEvents/{eventId} {
+      allow get, list: if false;
+      allow create: if isValidId(eventId) && isValidJobEvent(request.resource.data);
+      allow update, delete: if false;
+    }
+
+    // Job issue reports - user submitted, no public listing
+    match /jobReports/{reportId} {
+      allow get: if isAuthenticated() && resource.data.reporterUid == request.auth.uid;
+      allow list: if false;
+      allow create: if isAuthenticated() && request.resource.data.reporterUid == request.auth.uid;
+      allow update, delete: if false;
+    }
+
+    // Ingestion run execution logs - backend/internal only
+    match /ingestionRuns/{runId} {
+      allow get, list: if false;
+      allow create, update, delete: if false;
+    }
+
+    // System configuration - public read, protected write
+    match /systemConfig/{configId} {
+      allow get, list: if true;
+      allow create, update, delete: if false;
+    }
+  }
+}

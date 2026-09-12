@@ -1,0 +1,284 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Authenticated job seeker profile containing work preferences, skills, and availability.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "description": "Authenticated Firebase User UID"
+        },
+        "firstName": {
+          "type": "string",
+          "description": "First name of the job seeker",
+          "maxLength": 60
+        },
+        "lastName": {
+          "type": "string",
+          "description": "Last name of the job seeker",
+          "maxLength": 60
+        },
+        "country": {
+          "type": "string",
+          "description": "Country of residence",
+          "maxLength": 80
+        },
+        "timezone": {
+          "type": "string",
+          "description": "Primary working timezone",
+          "maxLength": 80
+        },
+        "languages": {
+          "type": "array",
+          "description": "List of spoken and written languages"
+        },
+        "skills": {
+          "type": "array",
+          "description": "AI and data domain technical skills or task capabilities"
+        },
+        "experienceLevel": {
+          "type": "string",
+          "description": "Experience level in AI evaluation or data contracting"
+        },
+        "preferredCategories": {
+          "type": "array",
+          "description": "Preferred AI job categories for contract matching"
+        },
+        "preferredWorkTypes": {
+          "type": "array",
+          "description": "Preferred contractor engagement models"
+        },
+        "availability": {
+          "type": "string",
+          "description": "Current availability window to start new contracts"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "ISO timestamp of the latest profile update"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "ISO timestamp when the profile was initialized"
+        }
+      }
+    },
+    "UserSettings": {
+      "title": "UserSettings",
+      "description": "Authenticated user settings covering account preferences, job feed parameters, notifications, and privacy.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "description": "Authenticated Firebase User UID"
+        },
+        "account": {
+          "type": "object",
+          "description": "Account preferences and public alias"
+        },
+        "jobPreferences": {
+          "type": "object",
+          "description": "Job feed filtering, currency, and presentation preferences"
+        },
+        "notifications": {
+          "type": "object",
+          "description": "Email alerts, digests, and notification frequency"
+        },
+        "privacy": {
+          "type": "object",
+          "description": "Privacy visibility, discovery options, and telemetry consent"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "ISO timestamp of the latest settings update"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "ISO timestamp when the settings were created"
+        }
+      }
+    },
+    "Job": {
+      "title": "Job",
+      "description": "Normalized remote AI/data contractor job listing.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "slug": { "type": "string" },
+        "companyName": { "type": "string" },
+        "sourceId": { "type": "string" },
+        "sourceName": { "type": "string" },
+        "sourceJobId": { "type": "string" },
+        "originalUrl": { "type": "string" },
+        "description": { "type": "string" },
+        "normalizedDescription": { "type": "string" },
+        "category": { "type": "string" },
+        "subcategory": { "type": "string" },
+        "jobType": { "type": "string" },
+        "workType": { "type": "string" },
+        "locationType": { "type": "string" },
+        "eligibleCountries": { "type": "array" },
+        "languages": { "type": "array" },
+        "experienceLevel": { "type": "string" },
+        "compensationType": { "type": "string" },
+        "compensationMin": { "type": "number" },
+        "compensationMax": { "type": "number" },
+        "compensationCurrency": { "type": "string" },
+        "skills": { "type": "array" },
+        "postedAt": { "type": "string" },
+        "discoveredAt": { "type": "string" },
+        "updatedAt": { "type": "string" },
+        "expiresAt": { "type": "string" },
+        "lastCheckedAt": { "type": "string" },
+        "status": { "type": "string" },
+        "verificationStatus": { "type": "string" },
+        "urlStatus": { "type": "string" },
+        "contentHash": { "type": "string" },
+        "createdAt": { "type": "string" }
+      }
+    },
+    "Source": {
+      "title": "Source",
+      "description": "Contract platform or direct feed origin configuration.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "domain": { "type": "string" },
+        "sourceType": { "type": "string" },
+        "baseUrl": { "type": "string" },
+        "verificationStatus": { "type": "string" },
+        "verificationReason": { "type": "string" },
+        "verifiedAt": { "type": "string" },
+        "lastReviewedAt": { "type": "string" },
+        "active": { "type": "boolean" },
+        "fetchMethod": { "type": "string" },
+        "fetchInterval": { "type": "number" },
+        "lastSuccessfulFetch": { "type": "string" },
+        "lastAttemptedFetch": { "type": "string" },
+        "jobsFetched": { "type": "number" },
+        "jobsPublished": { "type": "number" },
+        "jobsRejected": { "type": "number" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      }
+    },
+    "IngestionRun": {
+      "title": "IngestionRun",
+      "description": "Telemetry and execution logs for data pipeline ingestion runs.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "sourceId": { "type": "string" },
+        "startedAt": { "type": "string" },
+        "completedAt": { "type": "string" },
+        "status": { "type": "string" },
+        "fetched": { "type": "number" },
+        "parsed": { "type": "number" },
+        "normalized": { "type": "number" },
+        "duplicates": { "type": "number" },
+        "published": { "type": "number" },
+        "rejected": { "type": "number" },
+        "errors": { "type": "array" }
+      }
+    },
+    "SavedJob": {
+      "title": "SavedJob",
+      "description": "User bookmarked or tracked job application entry.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "uid": { "type": "string" },
+        "jobId": { "type": "string" },
+        "notes": { "type": "string" },
+        "status": { "type": "string" },
+        "savedAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      }
+    },
+    "JobEvent": {
+      "title": "JobEvent",
+      "description": "Telemetry event recording views, clicks, and interactions.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "jobId": { "type": "string" },
+        "sourceId": { "type": "string" },
+        "eventType": { "type": "string" },
+        "uid": { "type": "string" },
+        "timestamp": { "type": "string" },
+        "metadata": { "type": "object" }
+      }
+    },
+    "JobReport": {
+      "title": "JobReport",
+      "description": "Community report on broken, expired, or fraudulent job listings.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "jobId": { "type": "string" },
+        "reporterUid": { "type": "string" },
+        "reason": { "type": "string" },
+        "details": { "type": "string" },
+        "status": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "resolvedAt": { "type": "string" }
+      }
+    },
+    "SystemConfig": {
+      "title": "SystemConfig",
+      "description": "Global application and pipeline parameters.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "configKey": { "type": "string" },
+        "value": { "type": "object" },
+        "updatedAt": { "type": "string" },
+        "updatedBy": { "type": "string" }
+      }
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "User profile document keyed directly by authenticated Firebase UID."
+    },
+    "/profiles/{userId}": {
+      "schema": "UserProfile",
+      "description": "User profile document keyed directly by authenticated Firebase UID."
+    },
+    "/user_settings/{userId}": {
+      "schema": "UserSettings",
+      "description": "User settings document keyed directly by authenticated Firebase UID."
+    },
+    "/jobs/{jobId}": {
+      "schema": "Job",
+      "description": "Aggregated job listing document."
+    },
+    "/sources/{sourceId}": {
+      "schema": "Source",
+      "description": "Job source definition and scraping configuration."
+    },
+    "/savedJobs/{uid_jobId}": {
+      "schema": "SavedJob",
+      "description": "Saved job entry linking user UID and job ID."
+    },
+    "/jobEvents/{eventId}": {
+      "schema": "JobEvent",
+      "description": "Analytics and interaction event for job posts."
+    },
+    "/jobReports/{reportId}": {
+      "schema": "JobReport",
+      "description": "User submitted job accuracy and quality report."
+    },
+    "/ingestionRuns/{runId}": {
+      "schema": "IngestionRun",
+      "description": "Log record for data ingestion executions."
+    },
+    "/systemConfig/{configId}": {
+      "schema": "SystemConfig",
+      "description": "System configuration parameters."
+    }
+  }
+}
